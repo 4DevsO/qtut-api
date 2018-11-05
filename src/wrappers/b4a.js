@@ -163,6 +163,25 @@ export const userDelete = (userObjectId) => {
   });
 };
 
+/**
+ * @name userGetByFilter
+ * @description get users by N params
+ * @param {filter{...string : any}} filter
+ */
+export const userGetByFilter = (filter) => {
+  return new Promise((resolve, reject) => {
+    Parse.Cloud.run('userGetByFilter', {
+      filter: filter
+    })
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+};
+
 //----------------- Product Functions -----------------//
 
 /**

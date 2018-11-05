@@ -311,4 +311,194 @@ router.post('/resetPassword', (req, res) => {
   }
 });
 
+/**
+ * @name /user/update
+ * @description update info of one user
+ * @param {User{objectId, ...params}} user
+ */
+router.post('/update', (req, res) => {
+  if (req.body != undefined && req.body.user != undefined) {
+    const user = req.body.user;
+    const allowedFields = Object.keys(user).filter(
+      (field) =>
+        field !== 'premium' &&
+        field !== 'username' &&
+        field !== 'email' &&
+        field !== 'password'
+    );
+    if (allowedFields.length > 0) {
+      const userToBeUpdated = allowedFields.reduce((newUser, field) => {
+        newUser[field] = user[field];
+        return newUser;
+      }, {});
+
+      b4a
+        .userUpdate(userToBeUpdated)
+        .then((result) => {
+          logger.log('info', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            response: result,
+            date: new Date()
+          });
+          res.send(result).status(200);
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            response: err,
+            date: new Date()
+          });
+          res.send(err).status(500);
+        });
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid params for update').status(400);
+    }
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
+/**
+ * @name /user/delete
+ * @description delete user
+ * @param {string} userObjectId
+ */
+router.post('/delete', (req, res) => {
+  if (req.body != undefined && req.body.userObjectId != undefined) {
+    const userObjectId = req.body.userObjectId;
+    if (typeof userObjectId == typeof 'string') {
+      b4a
+        .userDelete(userObjectId)
+        .then((result) => {
+          logger.log('info', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            response: result,
+            date: new Date()
+          });
+          res.send(result).status(200);
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            date: new Date()
+          });
+          res.send(err).status(500);
+        });
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid objectId').status(400);
+    }
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
+/**
+ * @name /user/list
+ * @description get users by name
+ * @param {string} name
+ */
+router.get('/list/:name', (req, res) => {
+  if (req.params != undefined && req.params.name != undefined) {
+    const name = req.params.name;
+    if (typeof name == typeof 'string') {
+      const filter = {
+        name: name
+      };
+      b4a
+        .userGetByFilter(filter)
+        .then((result) => {
+          logger.log('info', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            response: result,
+            date: new Date()
+          });
+          res.send(result).status(200);
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            date: new Date()
+          });
+          res.send(err).status(500);
+        });
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid name').status(400);
+    }
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
 export default router;
