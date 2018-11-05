@@ -1,23 +1,27 @@
 import express from 'express';
-import b4a from '../wrappers/b4a';
+import * as b4a from '../wrappers/b4a';
 import Logger from '../middlewares/logger';
 import StringUtils from '../helpers/string-utils';
 
 const logger = new Logger('qtut-api', '../../qtut-api.log', 'info');
 const router = express.Router();
 
-// Get User
-router.post('/', (req, res) => {
-  if (req.body != undefined && req.body.id != undefined) {
+/**
+ * @name /user
+ * @description get user
+ * @param {string} userObjectId
+ */
+router.get('/:userObjectId', (req, res) => {
+  if (req.params != undefined && req.params.userObjectId != undefined) {
     b4a
-      .getUser(req.body.id)
+      .userGet(req.params.userObjectId)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,
           hostname: req.hostname,
           method: req.method,
           endpoint: req.path,
-          params: req.body,
+          params: req.params,
           response: result,
           date: new Date()
         });
@@ -29,7 +33,7 @@ router.post('/', (req, res) => {
           hostname: req.hostname,
           method: req.method,
           endpoint: req.path,
-          params: req.body,
+          params: req.params,
           response: err,
           date: new Date()
         });
@@ -41,18 +45,22 @@ router.post('/', (req, res) => {
       hostname: req.hostname,
       method: req.method,
       endpoint: req.path,
-      params: req.body,
+      params: req.params,
       date: new Date()
     });
     res.sendStatus(400);
   }
 });
 
-// Set User ACL
-router.post('/setUsersAcls', (req, res) => {
+/**
+ * @name /user/setAcls
+ * @description set acls for user
+ * @param {User} user
+ */
+router.post('/setAcls', (req, res) => {
   if (req.body != undefined && req.body.user != undefined) {
     b4a
-      .setUsersAcls(req.body.user)
+      .userSetAcls(req.body.user)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,
@@ -90,16 +98,19 @@ router.post('/setUsersAcls', (req, res) => {
   }
 });
 
-// User SignUp
+/**
+ * @name /user/signUp
+ * @description signUp one user
+ * @param {string} email
+ * @param {string} password
+ */
 router.post('/signUp', (req, res) => {
   if (
     req.body != undefined &&
     req.body.email != undefined &&
-    req.body.username != undefined &&
     req.body.password != undefined
   ) {
     const email = req.body.email;
-    const username = req.body.username;
     const password = req.body.password;
     if (!StringUtils.validateEmail(email)) {
       logger.log('error', {
@@ -113,18 +124,6 @@ router.post('/signUp', (req, res) => {
       });
       res.send('Invalid Email').status(400);
     }
-    if (!StringUtils.validateUsername(username)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        response: 'Invalid User',
-        date: new Date()
-      });
-      res.send('Invalid User').status(400);
-    }
     if (!StringUtils.validatePassword(password)) {
       logger.log('error', {
         ip: req.ip,
@@ -138,7 +137,7 @@ router.post('/signUp', (req, res) => {
       res.send('Invalid Password').status(400);
     }
     b4a
-      .signUp(email, username, password)
+      .userSignUp(email, email, password)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,
@@ -176,26 +175,31 @@ router.post('/signUp', (req, res) => {
   }
 });
 
-// User logIn
-router.post('/logIn', (req, res) => {
+/**
+ * @name /user/signIn
+ * @description signIn one user
+ * @param {string} email
+ * @param {string} password
+ */
+router.post('/signIn', (req, res) => {
   if (
     req.body != undefined &&
-    req.body.username != undefined &&
+    req.body.email != undefined &&
     req.body.password != undefined
   ) {
-    const username = req.body.username;
+    const email = req.body.email;
     const password = req.body.password;
-    if (!StringUtils.validateUsername(username)) {
+    if (!StringUtils.validateEmail(email)) {
       logger.log('error', {
         ip: req.ip,
         hostname: req.hostname,
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid User',
+        response: 'Invalid Email',
         date: new Date()
       });
-      res.send('Invalid User').status(400);
+      res.send('Invalid Email').status(400);
     }
     if (!StringUtils.validatePassword(password)) {
       logger.log('error', {
@@ -210,7 +214,7 @@ router.post('/logIn', (req, res) => {
       res.send('Invalid Password').status(400);
     }
     b4a
-      .logIn(username, password)
+      .userSignIn(email, password)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,
@@ -248,8 +252,12 @@ router.post('/logIn', (req, res) => {
   }
 });
 
-// User Request Password Reset
-router.post('/requestPasswordReset', (req, res) => {
+/**
+ * @name /user/resetPassword
+ * @description request password reset for user
+ * @param {string} email
+ */
+router.post('/resetPassword', (req, res) => {
   if (req.body != undefined && req.body.email != undefined) {
     const email = req.body.email;
     if (!StringUtils.validateEmail(email)) {
@@ -265,7 +273,7 @@ router.post('/requestPasswordReset', (req, res) => {
       res.send('Invalid Email').status(400);
     }
     b4a
-      .requestPasswordReset(email)
+      .userResetPassword(email)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,

@@ -1,7 +1,7 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import Logger from './middlewares/logger';
-import b4a from './wrappers/b4a';
+import * as b4a from './wrappers/b4a';
 import controllers from './controllers';
 const app = Express();
 
@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 //* EndPoints *//
 
 // Hello
-app.get('/hello || /', (req, res) => {
+app.get('/hello', (req, res) => {
   b4a
     .hello()
     .then((result) => {
