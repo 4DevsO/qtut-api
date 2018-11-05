@@ -48,10 +48,9 @@ router.get('/:userObjectId', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Email',
         date: new Date()
       });
-      res.send('Invalid Email').status(400);
+      res.send('Invalid objectId').status(400);
     }
   } else {
     logger.log('error', {
@@ -87,7 +86,6 @@ router.post('/signUp', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Email',
         date: new Date()
       });
       res.send('Invalid Email').status(400);
@@ -99,7 +97,6 @@ router.post('/signUp', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Password',
         date: new Date()
       });
       res.send('Invalid Password').status(400);
@@ -164,7 +161,6 @@ router.post('/signIn', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Email',
         date: new Date()
       });
       res.send('Invalid Email').status(400);
@@ -176,7 +172,6 @@ router.post('/signIn', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Password',
         date: new Date()
       });
       res.send('Invalid Password').status(400);
@@ -235,7 +230,6 @@ router.post('/resetPassword', (req, res) => {
         method: req.method,
         endpoint: req.path,
         params: req.body,
-        response: 'Invalid Email',
         date: new Date()
       });
       res.send('Invalid Email').status(400);
