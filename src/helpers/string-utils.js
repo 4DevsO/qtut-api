@@ -1,5 +1,5 @@
-const EmailValidator = require('email-validator');
-const PasswordValidator = require('password-validator');
+import EmailValidator from 'email-validator';
+import PasswordValidator from 'password-validator';
 
 //* Configs *//
 
@@ -32,16 +32,16 @@ PassVal.is()
   .spaces();
 
 // Validate Email
-module.exports.validateEmail = (email) => {
+export const validateEmail = (email) => {
   return EmailValidator.validate(email);
 };
 
 // Validate Username
-module.exports.validateUsername = (username) => {
+export const validateUsername = (username) => {
   return UserVal.validate(username);
 };
 
 // Validate Password
-module.exports.validatePassword = (password) => {
+export const validatePassword = (password) => {
   return PassVal.validate(password);
 };

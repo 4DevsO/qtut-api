@@ -1,5 +1,5 @@
-const Parse = require('parse/node');
-const keys = require('../../configs/keys');
+import Parse from 'parse/node';
+import keys from '../../configs/keys';
 
 //----------------- Init Parse Conn -----------------//
 Parse.initialize(keys.b4a_app_id, keys.b4a_js_key, keys.b4a_master_key);
@@ -11,7 +11,7 @@ Parse.serverURL = 'https://qtut.back4app.io';
  * @name hello
  * @description prints Hello World! from b4a
  */
-module.exports.hello = () => {
+export const hello = () => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('hello')
       .then((res) => {
@@ -30,7 +30,7 @@ module.exports.hello = () => {
  * @description set acls for current user
  * @param {Parse.User} user
  */
-module.exports.userSetAcls = (user) => {
+export const userSetAcls = (user) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userSetAcls', {
       user: user
@@ -50,7 +50,7 @@ module.exports.userSetAcls = (user) => {
  * @param {string} email
  * @param {string} password
  */
-module.exports.userSignUp = (email, password) => {
+export const userSignUp = (email, password) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userSignUp', {
       username: email,
@@ -72,7 +72,7 @@ module.exports.userSignUp = (email, password) => {
  * @param {string} email
  * @param {string} password
  */
-module.exports.userSignIn = (email, password) => {
+export const userSignIn = (email, password) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userSignIn', {
       username: email,
@@ -92,7 +92,7 @@ module.exports.userSignIn = (email, password) => {
  * @description create/update value for field in user
  * @param {User{objectId, ...params}} user
  */
-module.exports.userUpdate = (user) => {
+export const userUpdate = (user) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userUpdate', {
       user: user
@@ -111,7 +111,7 @@ module.exports.userUpdate = (user) => {
  * @description get User
  * @param {string} userObjectId
  */
-module.exports.userGet = (userObjectId) => {
+export const userGet = (userObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userGet', {
       userObjectId: userObjectId
@@ -130,7 +130,7 @@ module.exports.userGet = (userObjectId) => {
  * @description send request to reset user password
  * @param {string} email
  */
-module.exports.userResetPassword = (email) => {
+export const userResetPassword = (email) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userResetPassword', {
       email: email
@@ -149,7 +149,7 @@ module.exports.userResetPassword = (email) => {
  * @description delete user
  * @param {string} userObjectId
  */
-module.exports.userDelete = (userObjectId) => {
+export const userDelete = (userObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('userDelete', {
       userObjectId: userObjectId
@@ -175,7 +175,7 @@ module.exports.userDelete = (userObjectId) => {
  * @param {array<string>} tags
  * @param {string} creatorObjectId
  */
-module.exports.productCreate = (
+export const productCreate = (
   name,
   price,
   description,
@@ -206,7 +206,7 @@ module.exports.productCreate = (
  * @description update one product
  * @param {Product{objectId, ...params}} product
  */
-module.exports.productUpdate = (product) => {
+export const productUpdate = (product) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('productUpdate', {
       product: product
@@ -225,7 +225,7 @@ module.exports.productUpdate = (product) => {
  * @description delete one product
  * @param {string} productObjectId
  */
-module.exports.productDelete = (productObjectId) => {
+export const productDelete = (productObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('productDelete', {
       productObjectId: productObjectId
@@ -244,7 +244,7 @@ module.exports.productDelete = (productObjectId) => {
  * @description get one product by it's objectId
  * @param {string} productObjectId
  */
-module.exports.productGet = (productObjectId) => {
+export const productGet = (productObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('productGet', {
       productObjectId: productObjectId
@@ -263,7 +263,7 @@ module.exports.productGet = (productObjectId) => {
  * @description get products by N params
  * @param {filter{...string : any}} filter
  */
-module.exports.productGetByFilter = (filter) => {
+export const productGetByFilter = (filter) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('productGetByFilter', {
       filter: filter
@@ -291,7 +291,7 @@ module.exports.productGetByFilter = (filter) => {
  * @param {string} locationDescription
  * @param {string} creatorObjectId
  */
-module.exports.saleCreate = (
+export const saleCreate = (
   fixed,
   products,
   mainProductObjectId,
@@ -326,7 +326,7 @@ module.exports.saleCreate = (
  * @description delete one sale
  * @param {string} saleObjectId
  */
-module.exports.saleDelete = (saleObjectId) => {
+export const saleDelete = (saleObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('saleDelete', {
       saleObjectId: saleObjectId
@@ -345,7 +345,7 @@ module.exports.saleDelete = (saleObjectId) => {
  * @description update one sale
  * @param {Sale{objectId, ...params}} sale
  */
-module.exports.saleUpdate = (sale) => {
+export const saleUpdate = (sale) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('saleUpdate', {
       sale: sale
@@ -364,7 +364,7 @@ module.exports.saleUpdate = (sale) => {
  * @description get one sale by objectId
  * @param {string} saleObjectId
  */
-module.exports.saleGet = (saleObjectId) => {
+export const saleGet = (saleObjectId) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('saleGet', {
       saleObjectId: saleObjectId
@@ -383,7 +383,7 @@ module.exports.saleGet = (saleObjectId) => {
  * @description get sales by filter
  * @param {filter{...params}} filter
  */
-module.exports.saleGetByFilter = (filter) => {
+export const saleGetByFilter = (filter) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('saleGetByFilter', {
       filter: filter
@@ -403,7 +403,7 @@ module.exports.saleGetByFilter = (filter) => {
  * @param {Location{latitude, longitude}} location
  * @param {number} radius
  */
-module.exports.saleGetByLocationRadius = (location, radius) => {
+export const saleGetByLocationRadius = (location, radius) => {
   return new Promise((resolve, reject) => {
     Parse.Cloud.run('saleGetByLocationRadius', {
       location: location,

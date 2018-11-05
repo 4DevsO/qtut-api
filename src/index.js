@@ -1,8 +1,8 @@
-const Express = require('express');
-const bodyParser = require('body-parser');
-const Logger = require('./middlewares/logger');
-const b4a = require('./b4a');
-const StringUtils = require('./helpers/string-utils');
+import Express from 'express';
+import bodyParser from 'body-parser';
+import Logger from './middlewares/logger';
+import b4a from './wrappers/b4a';
+import StringUtils from './helpers/string-utils';
 const app = Express();
 
 const logger = new Logger('qtut-api', '../qtut-api.log', 'info');
