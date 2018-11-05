@@ -13,32 +13,46 @@ const router = express.Router();
  */
 router.get('/:userObjectId', (req, res) => {
   if (req.params != undefined && req.params.userObjectId != undefined) {
-    b4a
-      .userGet(req.params.userObjectId)
-      .then((result) => {
-        logger.log('info', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.params,
-          response: result,
-          date: new Date()
+    const userObjectId = req.params.userObjectId;
+    if (typeof userObjectId == typeof 'string') {
+      b4a
+        .userGet(userObjectId)
+        .then((result) => {
+          logger.log('info', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.params,
+            response: result,
+            date: new Date()
+          });
+          res.send(result).status(200);
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.params,
+            response: err,
+            date: new Date()
+          });
+          res.send(err).status(500);
         });
-        res.send(result).status(200);
-      })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.params,
-          response: err,
-          date: new Date()
-        });
-        res.send(err).status(500);
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        response: 'Invalid Email',
+        date: new Date()
       });
+      res.send('Invalid Email').status(400);
+    }
   } else {
     logger.log('error', {
       ip: req.ip,
