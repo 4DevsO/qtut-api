@@ -5,12 +5,15 @@ import * as b4a from './wrappers/b4a';
 import controllers from './controllers';
 const app = Express();
 
-const logger = new Logger('qtut-api', '../qtut-api.log', 'info');
+const logger = new Logger('qtut-api', './qtut-api.log', 'info');
 app.use(bodyParser.json());
 
 //* EndPoints *//
 
-// Hello
+/**
+ * @name /hello
+ * @description tests b4a conn
+ */
 app.get('/hello', (req, res) => {
   b4a
     .hello()
