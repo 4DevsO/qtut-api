@@ -311,4 +311,66 @@ router.post('/resetPassword', (req, res) => {
   }
 });
 
+/**
+ * @name /user/update
+ * @description update info of one user
+ * @param {User{objectId, ...params}} user
+ */
+router.post('/update', (req, res) => {
+  if (req.body != undefined && req.body.user != undefined) {
+    const user = req.body.user;
+    const allowedFields = Object.keys(user).filter(
+      (field) =>
+        field !== 'premium' &&
+        field !== 'username' &&
+        field !== 'email' &&
+        field !== 'password'
+    );
+    if (allowedFields.length > 0) {
+      const userToBeUpdated = allowedFields.reduce((newUser, field) => {
+        newUser[field] = user[field];
+        return newUser;
+      }, {});
+
+      b4a
+        .userUpdate(userToBeUpdated)
+        .then((result) => {
+          res.send(result).status(200);
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            response: err,
+            date: new Date()
+          });
+          res.send(err).status(500);
+        });
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid params for update').status(400);
+    }
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
 export default router;
