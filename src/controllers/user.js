@@ -501,4 +501,103 @@ router.get('/list/:name', (req, res) => {
   }
 });
 
+/**
+ * @name /user/activatePremium
+ * @description activate premium for user
+ * @param {string} userObjectId
+ * @param {number<months>} period
+ */
+router.post('/activatePremium', (req, res) => {
+  if (
+    req.body != undefined &&
+    req.body.userObjectId != undefined &&
+    req.body.period != undefined
+  ) {
+    const userObjectId = req.body.userObjectId;
+    const period = req.body.period;
+    if (typeof period != typeof 1 || period < 0) {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid period').status(400);
+    }
+    if (typeof userObjectId != typeof 'string') {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid objectId').status(400);
+    }
+    b4a
+      .userGet(userObjectId)
+      .then((user) => {
+        let premiumFinalDate = new Date();
+        if (user.get('premium') == true) {
+          premiumFinalDate = user.get('premiumExpiresAt');
+        }
+        premiumFinalDate.setMonth(premiumFinalDate.getMonth() + period);
+        const userToBeUpdated = {
+          objectId: userObjectId,
+          premium: true,
+          premiumExpiresAt: premiumFinalDate
+        };
+        b4a
+          .userUpdate(userToBeUpdated)
+          .then((result) => {
+            logger.log('info', {
+              ip: req.ip,
+              hostname: req.hostname,
+              method: req.method,
+              endpoint: req.path,
+              params: req.body,
+              response: result,
+              date: new Date()
+            });
+            res.send(result).status(200);
+          })
+          .catch((err) => {
+            logger.log('error', {
+              ip: req.ip,
+              hostname: req.hostname,
+              method: req.method,
+              endpoint: req.path,
+              params: req.body,
+              date: new Date()
+            });
+            res.send(err).status(500);
+          });
+      })
+      .catch((err) => {
+        logger.log('error', {
+          ip: req.ip,
+          hostname: req.hostname,
+          method: req.method,
+          endpoint: req.path,
+          params: req.body,
+          date: new Date()
+        });
+        res.send(err).status(500);
+      });
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
 export default router;
