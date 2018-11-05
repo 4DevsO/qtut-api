@@ -67,52 +67,6 @@ router.get('/:userObjectId', (req, res) => {
 });
 
 /**
- * @name /user/setAcls
- * @description set acls for user
- * @param {User} user
- */
-router.post('/setAcls', (req, res) => {
-  if (req.body != undefined && req.body.user != undefined) {
-    b4a
-      .userSetAcls(req.body.user)
-      .then((result) => {
-        logger.log('info', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: result,
-          date: new Date()
-        });
-        res.send(result).status(200);
-      })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: err,
-          date: new Date()
-        });
-        res.send(err).status(500);
-      });
-  } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
-  }
-});
-
-/**
  * @name /user/signUp
  * @description signUp one user
  * @param {string} email
