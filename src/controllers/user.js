@@ -137,7 +137,7 @@ router.post('/signUp', (req, res) => {
       res.send('Invalid Password').status(400);
     }
     b4a
-      .userSignUp(email, email, password)
+      .userSignUp(email, password)
       .then((result) => {
         logger.log('info', {
           ip: req.ip,
@@ -541,7 +541,7 @@ router.post('/activatePremium', (req, res) => {
       .userGet(userObjectId)
       .then((user) => {
         let premiumFinalDate = new Date();
-        if (user.get('premium') == true) {
+        if (user['premium'] == true) {
           premiumFinalDate = user.get('premiumExpiresAt');
         }
         premiumFinalDate.setMonth(premiumFinalDate.getMonth() + period);
@@ -587,6 +587,92 @@ router.post('/activatePremium', (req, res) => {
         });
         res.send(err).status(500);
       });
+  } else {
+    logger.log('error', {
+      ip: req.ip,
+      hostname: req.hostname,
+      method: req.method,
+      endpoint: req.path,
+      params: req.body,
+      date: new Date()
+    });
+    res.sendStatus(400);
+  }
+});
+
+/**
+ * @name /user/deactivatePremium
+ * @description deactivate a user premium
+ * @param {string} userObjectId
+ */
+router.post('/deactivatePremium', (req, res) => {
+  if (req.body != undefined && req.body.userObjectId != undefined) {
+    const userObjectId = req.body.userObjectId;
+    if (typeof userObjectId == typeof 'string') {
+      b4a
+        .userGet(userObjectId)
+        .then((user) => {
+          if (user['premium'] == true) {
+            user['premium'] = false;
+            b4a
+              .userUpdate(user)
+              .then((result) => {
+                logger.log('info', {
+                  ip: req.ip,
+                  hostname: req.hostname,
+                  method: req.method,
+                  endpoint: req.path,
+                  params: req.body,
+                  response: result,
+                  date: new Date()
+                });
+                res.send(result).status(200);
+              })
+              .catch((err) => {
+                logger.log('error', {
+                  ip: req.ip,
+                  hostname: req.hostname,
+                  method: req.method,
+                  endpoint: req.path,
+                  params: req.body,
+                  date: new Date()
+                });
+                res.send(err).status(500);
+              });
+          } else {
+            logger.log('error', {
+              ip: req.ip,
+              hostname: req.hostname,
+              method: req.method,
+              endpoint: req.path,
+              params: req.body,
+              date: new Date()
+            });
+            res.send('User is not premium').status(400);
+          }
+        })
+        .catch((err) => {
+          logger.log('error', {
+            ip: req.ip,
+            hostname: req.hostname,
+            method: req.method,
+            endpoint: req.path,
+            params: req.body,
+            date: new Date()
+          });
+          res.send(err).status(500);
+        });
+    } else {
+      logger.log('error', {
+        ip: req.ip,
+        hostname: req.hostname,
+        method: req.method,
+        endpoint: req.path,
+        params: req.body,
+        date: new Date()
+      });
+      res.send('Invalid objectId').status(400);
+    }
   } else {
     logger.log('error', {
       ip: req.ip,
