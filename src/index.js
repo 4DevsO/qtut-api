@@ -17,6 +17,12 @@ app.use(helmet());
 
 //* EndPoints *//
 
+app.get('/', (req, res) => {
+  const test = req.query.teste;
+
+  res.send({ message: test }).status(200);
+});
+
 /**
  * @name /hello
  * @description tests b4a conn
