@@ -1,9 +1,8 @@
 import express from 'express';
 import * as b4a from '~/wrappers/b4a';
-import Logger from '~/middlewares/logger';
+import { success, internalError, badRequest } from '~/helpers/status';
 import StringUtils from '~/helpers/string-utils';
 
-const logger = new Logger('qtut-api', '../../qtut-api.log', 'info');
 const router = express.Router();
 
 /**
@@ -17,51 +16,13 @@ router.get('/:userObjectId', (req, res) => {
     if (typeof userObjectId == typeof 'string') {
       b4a
         .userGet(userObjectId)
-        .then((result) => {
-          logger.log('info', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.params,
-            response: result,
-            date: new Date()
-          });
-          res.send(result).status(200);
-        })
-        .catch((err) => {
-          logger.log('error', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.params,
-            response: err,
-            date: new Date()
-          });
-          res.send(err).status(500);
-        });
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     } else {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid objectId').status(400);
+      badRequest(res);
     }
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.params,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -80,63 +41,17 @@ router.post('/signUp', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (!StringUtils.validateEmail(email)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid Email').status(400);
+      badRequest(res);
     }
     if (!StringUtils.validatePassword(password)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid Password').status(400);
+      badRequest(res);
     }
     b4a
       .userSignUp(email, password)
-      .then((result) => {
-        logger.log('info', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: result,
-          date: new Date()
-        });
-        res.send(result).status(200);
-      })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: err,
-          date: new Date()
-        });
-        res.send(err).status(500);
-      });
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -155,63 +70,17 @@ router.post('/signIn', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (!StringUtils.validateEmail(email)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid Email').status(400);
+      badRequest(res);
     }
     if (!StringUtils.validatePassword(password)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid Password').status(400);
+      badRequest(res);
     }
     b4a
       .userSignIn(email, password)
-      .then((result) => {
-        logger.log('info', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: result,
-          date: new Date()
-        });
-        res.send(result).status(200);
-      })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: err,
-          date: new Date()
-        });
-        res.send(err).status(500);
-      });
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -224,52 +93,14 @@ router.post('/resetPassword', (req, res) => {
   if (req.body != undefined && req.body.email != undefined) {
     const email = req.body.email;
     if (!StringUtils.validateEmail(email)) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid Email').status(400);
+      badRequest(res);
     }
     b4a
       .userResetPassword(email)
-      .then((result) => {
-        logger.log('info', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: result,
-          date: new Date()
-        });
-        res.send(result).status(200);
-      })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          response: err,
-          date: new Date()
-        });
-        res.send(err).status(500);
-      });
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -296,51 +127,13 @@ router.post('/update', (req, res) => {
 
       b4a
         .userUpdate(userToBeUpdated)
-        .then((result) => {
-          logger.log('info', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            response: result,
-            date: new Date()
-          });
-          res.send(result).status(200);
-        })
-        .catch((err) => {
-          logger.log('error', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            response: err,
-            date: new Date()
-          });
-          res.send(err).status(500);
-        });
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     } else {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid params for update').status(400);
+      badRequest(res);
     }
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -355,50 +148,13 @@ router.post('/delete', (req, res) => {
     if (typeof userObjectId == typeof 'string') {
       b4a
         .userDelete(userObjectId)
-        .then((result) => {
-          logger.log('info', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            response: result,
-            date: new Date()
-          });
-          res.send(result).status(200);
-        })
-        .catch((err) => {
-          logger.log('error', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            date: new Date()
-          });
-          res.send(err).status(500);
-        });
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     } else {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid objectId').status(400);
+      badRequest(res);
     }
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -416,50 +172,13 @@ router.get('/list/:name', (req, res) => {
       };
       b4a
         .userGetByFilter(filter)
-        .then((result) => {
-          logger.log('info', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            response: result,
-            date: new Date()
-          });
-          res.send(result).status(200);
-        })
-        .catch((err) => {
-          logger.log('error', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            date: new Date()
-          });
-          res.send(err).status(500);
-        });
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     } else {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid name').status(400);
+      badRequest(res);
     }
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -478,26 +197,10 @@ router.post('/activatePremium', (req, res) => {
     const userObjectId = req.body.userObjectId;
     const period = req.body.period;
     if (typeof period != typeof 1 || period < 0) {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid period').status(400);
+      badRequest(res);
     }
     if (typeof userObjectId != typeof 'string') {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid objectId').status(400);
+      badRequest(res);
     }
     b4a
       .userGet(userObjectId)
@@ -514,51 +217,12 @@ router.post('/activatePremium', (req, res) => {
         };
         b4a
           .userUpdate(userToBeUpdated)
-          .then((result) => {
-            logger.log('info', {
-              ip: req.ip,
-              hostname: req.hostname,
-              method: req.method,
-              endpoint: req.path,
-              params: req.body,
-              response: result,
-              date: new Date()
-            });
-            res.send(result).status(200);
-          })
-          .catch((err) => {
-            logger.log('error', {
-              ip: req.ip,
-              hostname: req.hostname,
-              method: req.method,
-              endpoint: req.path,
-              params: req.body,
-              date: new Date()
-            });
-            res.send(err).status(500);
-          });
+          .then((result) => success(res, result))
+          .catch((err) => internalError(res, err));
       })
-      .catch((err) => {
-        logger.log('error', {
-          ip: req.ip,
-          hostname: req.hostname,
-          method: req.method,
-          endpoint: req.path,
-          params: req.body,
-          date: new Date()
-        });
-        res.send(err).status(500);
-      });
+      .catch((err) => internalError(res, err));
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
@@ -578,73 +242,18 @@ router.post('/deactivatePremium', (req, res) => {
             user['premium'] = false;
             b4a
               .userUpdate(user)
-              .then((result) => {
-                logger.log('info', {
-                  ip: req.ip,
-                  hostname: req.hostname,
-                  method: req.method,
-                  endpoint: req.path,
-                  params: req.body,
-                  response: result,
-                  date: new Date()
-                });
-                res.send(result).status(200);
-              })
-              .catch((err) => {
-                logger.log('error', {
-                  ip: req.ip,
-                  hostname: req.hostname,
-                  method: req.method,
-                  endpoint: req.path,
-                  params: req.body,
-                  date: new Date()
-                });
-                res.send(err).status(500);
-              });
+              .then((result) => success(res, result))
+              .catch((err) => internalError(res, err));
           } else {
-            logger.log('error', {
-              ip: req.ip,
-              hostname: req.hostname,
-              method: req.method,
-              endpoint: req.path,
-              params: req.body,
-              date: new Date()
-            });
-            res.send('User is not premium').status(400);
+            badRequest(res);
           }
         })
-        .catch((err) => {
-          logger.log('error', {
-            ip: req.ip,
-            hostname: req.hostname,
-            method: req.method,
-            endpoint: req.path,
-            params: req.body,
-            date: new Date()
-          });
-          res.send(err).status(500);
-        });
+        .catch((err) => internalError(res, err));
     } else {
-      logger.log('error', {
-        ip: req.ip,
-        hostname: req.hostname,
-        method: req.method,
-        endpoint: req.path,
-        params: req.body,
-        date: new Date()
-      });
-      res.send('Invalid objectId').status(400);
+      badRequest(res);
     }
   } else {
-    logger.log('error', {
-      ip: req.ip,
-      hostname: req.hostname,
-      method: req.method,
-      endpoint: req.path,
-      params: req.body,
-      date: new Date()
-    });
-    res.sendStatus(400);
+    badRequest(res);
   }
 });
 
