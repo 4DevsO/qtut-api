@@ -1,5 +1,6 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
+import helmet from 'helmet';
 import Logger from '~/middlewares/logger';
 import * as b4a from '~/wrappers/b4a';
 import controllers from '~/controllers';
@@ -7,6 +8,7 @@ const app = Express();
 
 const logger = new Logger('qtut-api', './qtut-api.log', 'info');
 app.use(bodyParser.json());
+app.use(helmet());
 
 //* EndPoints *//
 

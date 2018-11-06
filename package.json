@@ -17,6 +17,7 @@
     "body-parser": "^1.18.3",
     "email-validator": "^2.0.4",
     "express": "^4.16.4",
+    "helmet": "3.14.0",
     "parse": "^2.1.0",
     "password-validator": "^4.1.1",
     "winston": "^3.1.0"
