@@ -8,6 +8,11 @@ const app = Express();
 
 const logger = new Logger('qtut-api', './qtut-api.log', 'info');
 app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 app.use(helmet());
 
 //* EndPoints *//
