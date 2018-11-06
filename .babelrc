@@ -1,14 +1,29 @@
 {
-  "presets": ["es2015"],
-  "sourceMaps": "inline",
-  "plugins": [
-    "source-map-support",
-    [
-      "root-import",
-      {
-        "rootPathPrefix": "~",
-        "rootPathSuffix": "src"
-      }
-    ]
-  ]
+  "presets": ["@babel/preset-env"],
+  "env": {
+    "production": {
+      "plugins": [
+        [
+          "root-import",
+          {
+            "rootPathPrefix": "~",
+            "rootPathSuffix": "src"
+          }
+        ]
+      ]
+    },
+    "development": {
+      "sourceMaps": "inline",
+      "plugins": [
+        "source-map-support",
+        [
+          "root-import",
+          {
+            "rootPathPrefix": "~",
+            "rootPathSuffix": "src"
+          }
+        ]
+      ]
+    }
+  }
 }
