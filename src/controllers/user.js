@@ -1,7 +1,7 @@
 import express from 'express';
-import * as b4a from '../wrappers/b4a';
-import Logger from '../middlewares/logger';
-import StringUtils from '../helpers/string-utils';
+import * as b4a from '~/wrappers/b4a';
+import Logger from '~/middlewares/logger';
+import StringUtils from '~/helpers/string-utils';
 
 const logger = new Logger('qtut-api', '../../qtut-api.log', 'info');
 const router = express.Router();

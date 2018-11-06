@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint ./src/**/.js",
     "start": "node_modules/.bin/babel-node ./src/index.js",
-    "start:dev": "node_modules/.bin/nodemon ./src/index.js --exec babel-node --plugins source-map-support --"
+    "start:dev": "node_modules/.bin/nodemon ./src/index.js --exec babel-node --"
   },
   "author": "Gabriel Santos",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "winston": "^3.1.0"
   },
   "devDependencies": {
+    "babel-plugin-root-import": "6.1.0",
     "babel-plugin-source-map-support": "2.0.1",
     "eslint": "^5.8.0",
     "eslint-config-prettier": "^3.1.0",
