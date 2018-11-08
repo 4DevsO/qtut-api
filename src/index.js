@@ -1,7 +1,7 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
-import logger from '~/middlewares/log';
+import logger, { responseBody } from '~/middlewares/log';
 import { success, internalError } from '~/helpers/status';
 import * as b4a from '~/wrappers/b4a';
 import controllers from '~/controllers';
@@ -15,7 +15,8 @@ app.use(
   })
 );
 app.use(helmet());
-// app.use(logger);
+app.use(responseBody);
+app.use(logger);
 
 //* EndPoints *//
 
