@@ -15,6 +15,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "dotenv": "6.1.0",
     "email-validator": "^2.0.4",
     "express": "^4.16.4",
     "express-mung": "0.5.1",

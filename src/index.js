@@ -5,6 +5,7 @@ import logger from '~/middlewares/log';
 import { success, internalError } from '~/helpers/status';
 import * as b4a from '~/wrappers/b4a';
 import controllers from '~/controllers';
+require('dotenv').config();
 const app = Express();
 
 app.use(bodyParser.json());
