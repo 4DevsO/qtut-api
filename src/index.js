@@ -14,7 +14,7 @@ app.use(
   })
 );
 app.use(helmet());
-// app.use(logger);
+app.use(logger);
 
 //* EndPoints *//
 
