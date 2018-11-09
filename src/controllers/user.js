@@ -107,12 +107,17 @@ router.post('/resetPassword', (req, res) => {
 /**
  * @name /user/update
  * @description update info of one user
- * @param {User{objectId, ...params}} user
+ * @param {...params} body
  */
-router.post('/update', (req, res) => {
-  if (req.body != undefined && req.body.user != undefined) {
-    const user = req.body.user;
-    const allowedFields = Object.keys(user).filter(
+router.post('/update/:objectId', (req, res) => {
+  if (
+    req.body != undefined &&
+    req.params != undefined &&
+    req.params.objectId != undefined
+  ) {
+    const data = req.body;
+    const userObjectId = req.params.objectId;
+    const allowedFields = Object.keys(data).filter(
       (field) =>
         field !== 'premium' &&
         field !== 'username' &&
@@ -121,10 +126,10 @@ router.post('/update', (req, res) => {
     );
     if (allowedFields.length > 0) {
       const userToBeUpdated = allowedFields.reduce((newUser, field) => {
-        newUser[field] = user[field];
+        newUser[field] = data[field];
         return newUser;
       }, {});
-
+      userToBeUpdated['objectId'] = userObjectId;
       b4a
         .userUpdate(userToBeUpdated)
         .then((result) => success(res, result))
