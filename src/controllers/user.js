@@ -1,12 +1,12 @@
 import express from 'express';
 import * as b4a from '~/wrappers/b4a';
 import { success, internalError, badRequest } from '~/helpers/status';
-import StringUtils from '~/helpers/string-utils';
+import * as StringUtils from '~/helpers/string-utils';
 
 const router = express.Router();
 
 /**
- * @name /user
+ * @name /user/:userObjectId
  * @description get user
  * @param {string} userObjectId
  */
@@ -42,14 +42,14 @@ router.post('/signUp', (req, res) => {
     const password = req.body.password;
     if (!StringUtils.validateEmail(email)) {
       badRequest(res);
-    }
-    if (!StringUtils.validatePassword(password)) {
+    } else if (!StringUtils.validatePassword(password)) {
       badRequest(res);
+    } else {
+      b4a
+        .userSignUp(email, password)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     }
-    b4a
-      .userSignUp(email, password)
-      .then((result) => success(res, result))
-      .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
   }
@@ -70,15 +70,15 @@ router.post('/signIn', (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     if (!StringUtils.validateEmail(email)) {
-      badRequest(res);
+      badRequest(res, 'Invalid Email');
+    } else if (!StringUtils.validatePassword(password)) {
+      badRequest(res, 'Invalid Password');
+    } else {
+      b4a
+        .userSignIn(email, password)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     }
-    if (!StringUtils.validatePassword(password)) {
-      badRequest(res);
-    }
-    b4a
-      .userSignIn(email, password)
-      .then((result) => success(res, result))
-      .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
   }
@@ -93,27 +93,29 @@ router.post('/resetPassword', (req, res) => {
   if (req.body != undefined && req.body.email != undefined) {
     const email = req.body.email;
     if (!StringUtils.validateEmail(email)) {
-      badRequest(res);
+      badRequest(res, 'Invalid Email');
+    } else {
+      b4a
+        .userResetPassword(email)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     }
-    b4a
-      .userResetPassword(email)
-      .then((result) => success(res, result))
-      .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
   }
 });
 
 /**
- * @name /user/update
+ * @name /user/update/:userObjectId
  * @description update info of one user
  * @param {...params} body
+ * @param {string} userObjectId
  */
 router.post('/update/:objectId', (req, res) => {
   if (
     req.body != undefined &&
     req.params != undefined &&
-    req.params.objectId != undefined
+    req.params.userObjectId != undefined
   ) {
     const data = req.body;
     const userObjectId = req.params.objectId;
@@ -135,7 +137,7 @@ router.post('/update/:objectId', (req, res) => {
         .then((result) => success(res, result))
         .catch((err) => internalError(res, err));
     } else {
-      badRequest(res);
+      badRequest(res, 'Must pass at least one allowed field');
     }
   } else {
     badRequest(res);
@@ -143,20 +145,20 @@ router.post('/update/:objectId', (req, res) => {
 });
 
 /**
- * @name /user/delete
+ * @name /user/delete/:userObjectId
  * @description delete user
  * @param {string} userObjectId
  */
-router.post('/delete', (req, res) => {
-  if (req.body != undefined && req.body.userObjectId != undefined) {
-    const userObjectId = req.body.userObjectId;
+router.post('/delete/:userObjectId', (req, res) => {
+  if (req.params != undefined && req.params.userObjectId != undefined) {
+    const userObjectId = req.params.userObjectId;
     if (typeof userObjectId == typeof 'string') {
       b4a
         .userDelete(userObjectId)
         .then((result) => success(res, result))
         .catch((err) => internalError(res, err));
     } else {
-      badRequest(res);
+      badRequest(res, 'userObjectId must be a string');
     }
   } else {
     badRequest(res);
@@ -164,7 +166,7 @@ router.post('/delete', (req, res) => {
 });
 
 /**
- * @name /user/list
+ * @name /user/list/:name
  * @description get users by name
  * @param {string} name
  */
@@ -180,7 +182,7 @@ router.get('/list/:name', (req, res) => {
         .then((result) => success(res, result))
         .catch((err) => internalError(res, err));
     } else {
-      badRequest(res);
+      badRequest(res, 'name must be a string');
     }
   } else {
     badRequest(res);
@@ -188,57 +190,61 @@ router.get('/list/:name', (req, res) => {
 });
 
 /**
- * @name /user/activatePremium
+ * @name /user/activatePremium/:userObjectId
  * @description activate premium for user
  * @param {string} userObjectId
  * @param {number<months>} period
  */
-router.post('/activatePremium', (req, res) => {
+router.post('/activatePremium/:userObjectId', (req, res) => {
   if (
     req.body != undefined &&
-    req.body.userObjectId != undefined &&
-    req.body.period != undefined
+    req.body.period != undefined &&
+    req.params != undefined &&
+    req.params.userObjectId != undefined
   ) {
-    const userObjectId = req.body.userObjectId;
+    const userObjectId = req.params.userObjectId;
     const period = req.body.period;
     if (typeof period != typeof 1 || period < 0) {
-      badRequest(res);
+      badRequest(
+        res,
+        'period must be the number of months and cannot be negative'
+      );
+    } else if (typeof userObjectId != typeof 'string') {
+      badRequest(res, 'userObjectId must be a string');
+    } else {
+      b4a
+        .userGet(userObjectId)
+        .then((user) => {
+          let premiumFinalDate = new Date();
+          if (user['premium'] == true) {
+            premiumFinalDate = user['premiumExpiresAt'];
+          }
+          premiumFinalDate.setMonth(premiumFinalDate.getMonth() + period);
+          const userToBeUpdated = {
+            objectId: userObjectId,
+            premium: true,
+            premiumExpiresAt: premiumFinalDate
+          };
+          b4a
+            .userUpdate(userToBeUpdated)
+            .then((result) => success(res, result))
+            .catch((err) => internalError(res, err));
+        })
+        .catch((err) => internalError(res, err));
     }
-    if (typeof userObjectId != typeof 'string') {
-      badRequest(res);
-    }
-    b4a
-      .userGet(userObjectId)
-      .then((user) => {
-        let premiumFinalDate = new Date();
-        if (user['premium'] == true) {
-          premiumFinalDate = user.get('premiumExpiresAt');
-        }
-        premiumFinalDate.setMonth(premiumFinalDate.getMonth() + period);
-        const userToBeUpdated = {
-          objectId: userObjectId,
-          premium: true,
-          premiumExpiresAt: premiumFinalDate
-        };
-        b4a
-          .userUpdate(userToBeUpdated)
-          .then((result) => success(res, result))
-          .catch((err) => internalError(res, err));
-      })
-      .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
   }
 });
 
 /**
- * @name /user/deactivatePremium
+ * @name /user/deactivatePremium/:userObjectId
  * @description deactivate a user premium
  * @param {string} userObjectId
  */
-router.post('/deactivatePremium', (req, res) => {
-  if (req.body != undefined && req.body.userObjectId != undefined) {
-    const userObjectId = req.body.userObjectId;
+router.post('/deactivatePremium/:userObjectId', (req, res) => {
+  if (req.params != undefined && req.params.userObjectId != undefined) {
+    const userObjectId = req.params.userObjectId;
     if (typeof userObjectId == typeof 'string') {
       b4a
         .userGet(userObjectId)
@@ -255,7 +261,7 @@ router.post('/deactivatePremium', (req, res) => {
         })
         .catch((err) => internalError(res, err));
     } else {
-      badRequest(res);
+      badRequest(res, 'userObjectId must be a string');
     }
   } else {
     badRequest(res);
