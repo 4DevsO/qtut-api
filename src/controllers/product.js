@@ -1,15 +1,24 @@
 import express from 'express';
+import * as b4a from '~/wrappers/b4a';
 import { success, internalError, badRequest } from '~/helpers/status';
 
 const router = express.Router();
 
+/**
+ * @name /product/:productObjectId
+ * @description get product by productObjectId
+ * @param {string} productObjectId
+ */
 router.get('/:productObjectId', (req, res) => {
-  if (req.param && req.params.productObjectId) {
+  if (req.param != undefined && req.params.productObjectId != undefined) {
     const productObjectId = req.params.productObjectId;
     if (typeof productObjectId === typeof 'string') {
-      // IMPLEMENTAR
+      b4a
+        .productGet(productObjectId)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     } else {
-      badRequest(res);
+      badRequest(res, 'productObjectId must be a string');
     }
   } else {
     badRequest(res);
@@ -66,3 +75,5 @@ router.post('/delete', (req, res) => {
 // Consultar por Tags
 
 // Consultar por Filtro ??? Não entendi
+
+export default router;
