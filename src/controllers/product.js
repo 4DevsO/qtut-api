@@ -61,7 +61,7 @@ router.post('/create', (req, res) => {
 
     if (isProduct) {
       imgur
-        .uploadBase64Images(pictures)
+        .uploadImages(pictures)
         .then((imgurPictures) => {
           if (imgurPictures.length > 0) {
             b4a

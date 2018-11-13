@@ -10,15 +10,14 @@ class imgur {
   }
 
   /**
-   * @name uploadBase64Image
-   * @description upload one base64 image and return the link
-   * @param {string<base64>} picture
+   * @name uploadImage
+   * @description upload one image and return the link
+   * @param {string<binary?base64?>} picture
    */
-  uploadBase64Image(picture) {
+  uploadImage(picture) {
     return new Promise((resolve, reject) => {
       const form = {
-        image: picture,
-        type: 'base64'
+        image: picture
       };
       req.post(
         'https://api.imgur.com/3/image',
@@ -42,15 +41,14 @@ class imgur {
   }
 
   /**
-   * @name uploadBase64Images
-   * @description upload the array of base64 images and return their links
-   * @param {array<string<base64>>} pictures
+   * @name uploadImages
+   * @description upload one array of images and return their links
+   * @param {array<binary?base64?>} pictures
    */
-  uploadBase64Images(pictures) {
+  uploadImages(pictures) {
     return new Promise((resolve, reject) => {
-      const imgurLinks = [];
       const uploadPromises = pictures.map((picture) =>
-        this.uploadBase64Image(picture)
+        this.uploadImage(picture)
       );
       Promise.all(uploadPromises)
         .then((result) => resolve(result))

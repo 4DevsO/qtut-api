@@ -1,9 +1,12 @@
 import express from 'express';
 import * as b4a from '~/wrappers/b4a';
+import Imgur from '~/wrappers/imgur';
+import keys from '../../configs/keys';
 import { success, internalError, badRequest } from '~/helpers/status';
 import * as StringUtils from '~/helpers/string-utils';
 
 const router = express.Router();
+const imgur = new Imgur(keys.imgur_client_id);
 
 /**
  * @name /user/:userObjectId
@@ -111,14 +114,10 @@ router.post('/resetPassword', (req, res) => {
  * @param {...params} body
  * @param {string} userObjectId
  */
-router.post('/update/:objectId', (req, res) => {
-  if (
-    req.body != undefined &&
-    req.params != undefined &&
-    req.params.userObjectId != undefined
-  ) {
+router.post('/update/:userObjectId', (req, res) => {
+  if (req.body && req.params && req.params.userObjectId) {
     const data = req.body;
-    const userObjectId = req.params.objectId;
+    const userObjectId = req.params.userObjectId;
     const allowedFields = Object.keys(data).filter(
       (field) =>
         field !== 'premium' &&
@@ -132,10 +131,23 @@ router.post('/update/:objectId', (req, res) => {
         return newUser;
       }, {});
       userToBeUpdated['objectId'] = userObjectId;
-      b4a
-        .userUpdate(userToBeUpdated)
-        .then((result) => success(res, result))
-        .catch((err) => internalError(res, err));
+      if (userToBeUpdated['profilePic']) {
+        imgur
+          .uploadImage(userToBeUpdated['profilePic'])
+          .then((profilePic) => {
+            userToBeUpdated['profilePic'] = profilePic;
+            b4a
+              .userUpdate(userToBeUpdated)
+              .then((result) => success(res, result))
+              .catch((err) => internalError(res, err));
+          })
+          .catch((err) => internalError(res, err));
+      } else {
+        b4a
+          .userUpdate(userToBeUpdated)
+          .then((result) => success(res, result))
+          .catch((err) => internalError(res, err));
+      }
     } else {
       badRequest(res, 'Must pass at least one allowed field');
     }
