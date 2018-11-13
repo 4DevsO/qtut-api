@@ -1,5 +1,5 @@
 import Parse from 'parse/node';
-import keys from '~/../configs/keys';
+import keys from '../../configs/keys';
 
 //----------------- Init Parse Conn -----------------//
 Parse.initialize(keys.b4a_app_id, keys.b4a_js_key, keys.b4a_master_key);

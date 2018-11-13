@@ -1,8 +1,11 @@
 import express from 'express';
 import * as b4a from '~/wrappers/b4a';
+import keys from '../../configs/keys';
+import Imgur from '~/wrappers/imgur';
 import { success, internalError, badRequest } from '~/helpers/status';
 
 const router = express.Router();
+const imgur = new Imgur(keys.imgur_client_id);
 
 /**
  * @name /product/:productObjectId
@@ -25,15 +28,58 @@ router.get('/:productObjectId', (req, res) => {
   }
 });
 
+/**
+ * @name /product/create
+ * @description create one product
+ * @param {string} name
+ * @param {number} price
+ * @param {string} description
+ * @param {array<string<base64>>} pictures
+ * @param {array<string>} tags
+ * @param {string} creatorObjectId
+ */
 router.post('/create', (req, res) => {
-  if (req.body) {
-    const { userObjectId, name, price, picture, tags, description } = req.body;
+  if (req.body != undefined) {
+    const {
+      creatorObjectId,
+      name,
+      price,
+      pictures,
+      tags,
+      description
+    } = req.body;
 
     const isProduct =
-      userObjectId && name && price && picture && tags && description;
+      creatorObjectId &&
+      name &&
+      price &&
+      pictures &&
+      pictures.length >= 1 &&
+      tags &&
+      tags.length >= 1 &&
+      description;
 
     if (isProduct) {
-      // IMPLEMENTAR
+      imgur
+        .uploadBase64Images(pictures)
+        .then((imgurPictures) => {
+          if (imgurPictures.length > 0) {
+            b4a
+              .productCreate(
+                name,
+                price,
+                description,
+                imgurPictures,
+                tags,
+                creatorObjectId
+              )
+              .then((product) => success(res, product))
+              .catch((err) => internalError(res, err));
+          } else {
+            badRequest(res, 'Not enough pictures');
+          }
+        })
+        .catch((err) => internalError(res, err));
     } else {
       badRequest(res);
     }

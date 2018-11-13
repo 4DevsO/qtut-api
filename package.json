@@ -22,7 +22,8 @@
     "helmet": "3.14.0",
     "morgan": "1.9.1",
     "parse": "^2.1.0",
-    "password-validator": "^4.1.1"
+    "password-validator": "^4.1.1",
+    "request": "2.88.0"
   },
   "devDependencies": {
     "@babel/cli": "7.1.2",
