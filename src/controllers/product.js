@@ -88,13 +88,45 @@ router.post('/create', (req, res) => {
   }
 });
 
-router.post('/update', (req, res) => {
-  if (req.body && req.body.product) {
-    const product = req.body.product;
-    if (typeof product === typeof {}) {
-      // IMPLEMENTAR
+/**
+ * @name /product/update/:productObjectId
+ * @description updates info of one product
+ * @param {...params} body
+ * @param {string} productObjectId
+ */
+
+router.post('/update/:productObjectId', (req, res) => {
+  if (req.body && req.params && req.params.productObjectId) {
+    const data = req.body;
+    const productObjectId = req.params.productObjectId;
+    const allowedFields = Object.keys(data).filter(
+      (field) => field !== 'user' && field !== 'userObjectId'
+    );
+    if (allowedFields.length > 0) {
+      const productToBeUpdated = allowedFields.reduce((newProduct, field) => {
+        newProduct[field] = data[field];
+        return newProduct;
+      }, {});
+      productToBeUpdated['objectId'] = productObjectId;
+      if (productToBeUpdated['pictures']) {
+        imgur
+          .uploadImages(productToBeUpdated['pictures'])
+          .then((pictures) => {
+            productToBeUpdated['pictures'] = pictures;
+            b4a
+              .productUpdate(productToBeUpdated)
+              .then((result) => success(res, result))
+              .catch((err) => internalError(res, err));
+          })
+          .catch((err) => internalError(res, err));
+      } else {
+        b4a
+          .productUpdate(productToBeUpdated)
+          .then((result) => success(res, result))
+          .catch((err) => internalError(res, err));
+      }
     } else {
-      badRequest(res);
+      badRequest(res, 'Must pass at least one allowed field');
     }
   } else {
     badRequest(res);
