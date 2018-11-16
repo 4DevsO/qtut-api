@@ -149,12 +149,28 @@ router.post('/delete/:productObjectId', (req, res) => {
   }
 });
 
-// Consultar por Criador
-
-// Consultar por Nome
-
-// Consultar por Tags
-
-// Consultar por Filtro ??? Não entendi
+/**
+ * @name /product/list/?name&tags?userObjectId
+ * @description list products by user or/and tags or/and name or/and price
+ * @param {string} name?
+ * @param {array<string>} tags?
+ * @param {string} userObjectId?
+ * @param {number} price
+ */
+router.post('/list', (req, res) => {
+  const query = req.query;
+  if (Object.keys(query).length > 0) {
+    const filter = Object.keys(query).reduce((newFilter, field) => {
+      newFilter[field] = query[field];
+      return newFilter;
+    }, {});
+    b4a
+      .productGetByFilter(filter)
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
+  } else {
+    badRequest(res);
+  }
+});
 
 export default router;
