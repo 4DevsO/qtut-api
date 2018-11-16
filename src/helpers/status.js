@@ -1,4 +1,4 @@
-export const success = (res, result) => res.send(result).status(200);
-export const internalError = (res, err) => res.send(err).status(500);
+export const success = (res, result) => res.status(200).send(result);
+export const internalError = (res, err) => res.status(500).send(err);
 export const badRequest = (res, errorMessage = 'Bad Request') =>
-  res.send({ message: errorMessage }).status(400);
+  res.status(400).send({ message: errorMessage });
