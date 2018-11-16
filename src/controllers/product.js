@@ -94,7 +94,6 @@ router.post('/create', (req, res) => {
  * @param {...params} body
  * @param {string} productObjectId
  */
-
 router.post('/update/:productObjectId', (req, res) => {
   if (req.body && req.params && req.params.productObjectId) {
     const data = req.body;
@@ -133,14 +132,18 @@ router.post('/update/:productObjectId', (req, res) => {
   }
 });
 
-router.post('/delete', (req, res) => {
-  if (req.body && req.body.productObjectId) {
-    const productObjectId = req.body.productObjectId;
-    if (typeof productObjectId === typeof 'string') {
-      // IMPLEMENTAR
-    } else {
-      badRequest(res);
-    }
+/**
+ * @name /product/delete/:productObjectId
+ * @description delete one product
+ * @param {string} productObjectId
+ */
+router.post('/delete/:productObjectId', (req, res) => {
+  if (req.params && req.params.productObjectId) {
+    const productObjectId = req.params.productObjectId;
+    b4a
+      .productDelete(productObjectId)
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
   }
