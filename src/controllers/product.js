@@ -4,7 +4,7 @@ import keys from '../../configs/keys';
 import Imgur from '~/wrappers/imgur';
 import { success, internalError, badRequest } from '~/helpers/status';
 
-const router = express.Router();
+const router = express.Router({ strict: true });
 const imgur = new Imgur(keys.imgur_client_id);
 
 /**
@@ -157,21 +157,20 @@ router.post('/delete/:productObjectId', (req, res) => {
  * @param {string} userObjectId?
  * @param {number} price
  */
-router.get('/list', (req, res) => {
+router.get('/list/', (req, res) => {
   const query = req.query;
-  res.send(query).status(200);
-  // if (Object.keys(query).length > 0) {
-  //   const filter = Object.keys(query).reduce((newFilter, field) => {
-  //     newFilter[field] = query[field];
-  //     return newFilter;
-  //   }, {});
-  //   b4a
-  //     .productGetByFilter(filter)
-  //     .then((result) => success(res, result))
-  //     .catch((err) => internalError(res, err));
-  // } else {
-  //   badRequest(res);
-  // }
+  if (Object.keys(query).length > 0) {
+    const filter = Object.keys(query).reduce((newFilter, field) => {
+      newFilter[field] = query[field];
+      return newFilter;
+    }, {});
+    b4a
+      .productGetByFilter(filter)
+      .then((result) => success(res, result))
+      .catch((err) => internalError(res, err));
+  } else {
+    badRequest(res);
+  }
 });
 
 export default router;
