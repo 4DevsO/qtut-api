@@ -90,7 +90,7 @@ router.post('/delete/:productObjectId', (req, res) => {
 });
 
 /**
- * @name /product/list?name&tags&userObjectId
+ * @name /product/list?name&tags&userObjectId&price
  * @description list products by user or/and tags or/and name or/and price
  * @param {string} name?
  * @param {array<string>} tags?
