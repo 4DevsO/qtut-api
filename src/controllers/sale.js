@@ -97,13 +97,30 @@ router.get('/list', (req, res) => {
       } else if (field == 'active') {
         newFilter[field] = query[field].toLowerCase() == 'true' ? true : false;
         return newFilter;
+      } else if (field == 'productName') {
+        return newFilter;
       }
       newFilter[field] = query[field];
       return newFilter;
     }, {});
+
     b4a
       .saleGetByFilter(filter)
-      .then((result) => success(res, result))
+      .then((result) => {
+        if (query['productName']) {
+          const saleResults = result.filter((sale) => {
+            return sale.products.some((product) => {
+              return product.name
+                .toLowerCase()
+                .includes(query['productName'].toLowerCase());
+            });
+          });
+
+          success(res, saleResults);
+        } else {
+          success(res, result);
+        }
+      })
       .catch((err) => internalError(res, err));
   } else {
     badRequest(res);
