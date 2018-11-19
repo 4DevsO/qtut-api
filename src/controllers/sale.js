@@ -94,6 +94,9 @@ router.get('/list', (req, res) => {
 
         newFilter[field] = { location, radius };
         return newFilter;
+      } else if (field == 'active') {
+        newFilter[field] = query[field].toLowerCase() == 'true' ? true : false;
+        return newFilter;
       }
       newFilter[field] = query[field];
       return newFilter;
