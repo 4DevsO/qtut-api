@@ -30,85 +30,6 @@ router.get('/get/:userObjectId', (req, res) => {
 });
 
 /**
- * @name /user/signUp
- * @description signUp one user
- * @param {string} email
- * @param {string} password
- */
-router.post('/signUp', (req, res) => {
-  if (
-    req.body != undefined &&
-    req.body.email != undefined &&
-    req.body.password != undefined
-  ) {
-    const email = req.body.email;
-    const password = req.body.password;
-    if (!StringUtils.validateEmail(email)) {
-      badRequest(res);
-    } else if (!StringUtils.validatePassword(password)) {
-      badRequest(res);
-    } else {
-      b4a
-        .userSignUp(email, password)
-        .then((result) => success(res, result))
-        .catch((err) => internalError(res, err));
-    }
-  } else {
-    badRequest(res);
-  }
-});
-
-/**
- * @name /user/signIn
- * @description signIn one user
- * @param {string} email
- * @param {string} password
- */
-router.post('/signIn', (req, res) => {
-  if (
-    req.body != undefined &&
-    req.body.email != undefined &&
-    req.body.password != undefined
-  ) {
-    const email = req.body.email;
-    const password = req.body.password;
-    if (!StringUtils.validateEmail(email)) {
-      badRequest(res, 'Invalid Email');
-    } else if (!StringUtils.validatePassword(password)) {
-      badRequest(res, 'Invalid Password');
-    } else {
-      b4a
-        .userSignIn(email, password)
-        .then((result) => success(res, result))
-        .catch((err) => internalError(res, err));
-    }
-  } else {
-    badRequest(res);
-  }
-});
-
-/**
- * @name /user/resetPassword
- * @description request password reset for user
- * @param {string} email
- */
-router.post('/resetPassword', (req, res) => {
-  if (req.body != undefined && req.body.email != undefined) {
-    const email = req.body.email;
-    if (!StringUtils.validateEmail(email)) {
-      badRequest(res, 'Invalid Email');
-    } else {
-      b4a
-        .userResetPassword(email)
-        .then((result) => success(res, result))
-        .catch((err) => internalError(res, err));
-    }
-  } else {
-    badRequest(res);
-  }
-});
-
-/**
  * @name /user/update/:userObjectId
  * @description update info of one user
  * @param {...params} body
@@ -195,6 +116,85 @@ router.get('/list', (req, res) => {
         .catch((err) => internalError(res, err));
     } else {
       badRequest(res, 'name must be a string');
+    }
+  } else {
+    badRequest(res);
+  }
+});
+
+/**
+ * @name /user/signUp
+ * @description signUp one user
+ * @param {string} email
+ * @param {string} password
+ */
+router.post('/signUp', (req, res) => {
+  if (
+    req.body != undefined &&
+    req.body.email != undefined &&
+    req.body.password != undefined
+  ) {
+    const email = req.body.email;
+    const password = req.body.password;
+    if (!StringUtils.validateEmail(email)) {
+      badRequest(res);
+    } else if (!StringUtils.validatePassword(password)) {
+      badRequest(res);
+    } else {
+      b4a
+        .userSignUp(email, password)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
+    }
+  } else {
+    badRequest(res);
+  }
+});
+
+/**
+ * @name /user/signIn
+ * @description signIn one user
+ * @param {string} email
+ * @param {string} password
+ */
+router.post('/signIn', (req, res) => {
+  if (
+    req.body != undefined &&
+    req.body.email != undefined &&
+    req.body.password != undefined
+  ) {
+    const email = req.body.email;
+    const password = req.body.password;
+    if (!StringUtils.validateEmail(email)) {
+      badRequest(res, 'Invalid Email');
+    } else if (!StringUtils.validatePassword(password)) {
+      badRequest(res, 'Invalid Password');
+    } else {
+      b4a
+        .userSignIn(email, password)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
+    }
+  } else {
+    badRequest(res);
+  }
+});
+
+/**
+ * @name /user/resetPassword
+ * @description request password reset for user
+ * @param {string} email
+ */
+router.post('/resetPassword', (req, res) => {
+  if (req.body != undefined && req.body.email != undefined) {
+    const email = req.body.email;
+    if (!StringUtils.validateEmail(email)) {
+      badRequest(res, 'Invalid Email');
+    } else {
+      b4a
+        .userResetPassword(email)
+        .then((result) => success(res, result))
+        .catch((err) => internalError(res, err));
     }
   } else {
     badRequest(res);

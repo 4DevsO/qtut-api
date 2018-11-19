@@ -8,7 +8,7 @@ const router = express.Router();
 const imgur = new Imgur(keys.imgur_client_id);
 
 /**
- * @name /product/:productObjectId
+ * @name /product/get/:productObjectId
  * @description get product by productObjectId
  * @param {string} productObjectId
  */
@@ -22,66 +22,6 @@ router.get('/get/:productObjectId', (req, res) => {
         .catch((err) => internalError(res, err));
     } else {
       badRequest(res, 'productObjectId must be a string');
-    }
-  } else {
-    badRequest(res);
-  }
-});
-
-/**
- * @name /product/create
- * @description create one product
- * @param {string} name
- * @param {number} price
- * @param {string} description
- * @param {array<string<base64>>} pictures
- * @param {array<string>} tags
- * @param {string} creatorObjectId
- */
-router.post('/create', (req, res) => {
-  if (req.body != undefined) {
-    const {
-      creatorObjectId,
-      name,
-      price,
-      pictures,
-      tags,
-      description
-    } = req.body;
-
-    const isProduct =
-      creatorObjectId &&
-      name &&
-      price &&
-      pictures &&
-      pictures.length >= 1 &&
-      tags &&
-      tags.length >= 1 &&
-      description;
-
-    if (isProduct) {
-      imgur
-        .uploadImages(pictures)
-        .then((imgurPictures) => {
-          if (imgurPictures.length > 0) {
-            b4a
-              .productCreate(
-                name,
-                price,
-                description,
-                imgurPictures,
-                tags,
-                creatorObjectId
-              )
-              .then((product) => success(res, product))
-              .catch((err) => internalError(res, err));
-          } else {
-            badRequest(res, 'Not enough pictures');
-          }
-        })
-        .catch((err) => internalError(res, err));
-    } else {
-      badRequest(res);
     }
   } else {
     badRequest(res);
@@ -168,6 +108,66 @@ router.get('/list', (req, res) => {
       .productGetByFilter(filter)
       .then((result) => success(res, result))
       .catch((err) => internalError(res, err));
+  } else {
+    badRequest(res);
+  }
+});
+
+/**
+ * @name /product/create
+ * @description create one product
+ * @param {string} name
+ * @param {number} price
+ * @param {string} description
+ * @param {array<string<base64>>} pictures
+ * @param {array<string>} tags
+ * @param {string} creatorObjectId
+ */
+router.post('/create', (req, res) => {
+  if (req.body != undefined) {
+    const {
+      creatorObjectId,
+      name,
+      price,
+      pictures,
+      tags,
+      description
+    } = req.body;
+
+    const isProduct =
+      creatorObjectId &&
+      name &&
+      price &&
+      pictures &&
+      pictures.length >= 1 &&
+      tags &&
+      tags.length >= 1 &&
+      description;
+
+    if (isProduct) {
+      imgur
+        .uploadImages(pictures)
+        .then((imgurPictures) => {
+          if (imgurPictures.length > 0) {
+            b4a
+              .productCreate(
+                name,
+                price,
+                description,
+                imgurPictures,
+                tags,
+                creatorObjectId
+              )
+              .then((product) => success(res, product))
+              .catch((err) => internalError(res, err));
+          } else {
+            badRequest(res, 'Not enough pictures');
+          }
+        })
+        .catch((err) => internalError(res, err));
+    } else {
+      badRequest(res);
+    }
   } else {
     badRequest(res);
   }
