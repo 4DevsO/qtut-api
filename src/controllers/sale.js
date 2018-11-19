@@ -97,7 +97,7 @@ router.get('/list', (req, res) => {
       } else if (field == 'active') {
         newFilter[field] = query[field].toLowerCase() == 'true' ? true : false;
         return newFilter;
-      } else if (field == 'productName') {
+      } else if (field == 'productName' || field == 'tags') {
         return newFilter;
       }
       newFilter[field] = query[field];
@@ -107,19 +107,33 @@ router.get('/list', (req, res) => {
     b4a
       .saleGetByFilter(filter)
       .then((result) => {
+        let saleResults = result;
+
         if (query['productName']) {
-          const saleResults = result.filter((sale) => {
+          saleResults = saleResults.filter((sale) => {
             return sale.products.some((product) => {
               return product.name
                 .toLowerCase()
                 .includes(query['productName'].toLowerCase());
             });
           });
-
-          success(res, saleResults);
-        } else {
-          success(res, result);
         }
+
+        if (query['tags']) {
+          const requiredTags = JSON.parse(query['tags']);
+          saleResults = saleResults.filter((sale) => {
+            return sale.products.some((product) => {
+              const productTags = product.tags;
+              return requiredTags.every((reqTag) =>
+                productTags.some(
+                  (prodTag) => prodTag.toLowerCase() == reqTag.toLowerCase()
+                )
+              );
+            });
+          });
+        }
+
+        success(res, saleResults);
       })
       .catch((err) => internalError(res, err));
   } else {
