@@ -157,20 +157,21 @@ router.post('/delete/:productObjectId', (req, res) => {
  * @param {string} userObjectId?
  * @param {number} price
  */
-router.post('/list', (req, res) => {
+router.get('/list', (req, res) => {
   const query = req.query;
-  if (Object.keys(query).length > 0) {
-    const filter = Object.keys(query).reduce((newFilter, field) => {
-      newFilter[field] = query[field];
-      return newFilter;
-    }, {});
-    b4a
-      .productGetByFilter(filter)
-      .then((result) => success(res, result))
-      .catch((err) => internalError(res, err));
-  } else {
-    badRequest(res);
-  }
+  res.send(query).status(200);
+  // if (Object.keys(query).length > 0) {
+  //   const filter = Object.keys(query).reduce((newFilter, field) => {
+  //     newFilter[field] = query[field];
+  //     return newFilter;
+  //   }, {});
+  //   b4a
+  //     .productGetByFilter(filter)
+  //     .then((result) => success(res, result))
+  //     .catch((err) => internalError(res, err));
+  // } else {
+  //   badRequest(res);
+  // }
 });
 
 export default router;
