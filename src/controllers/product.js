@@ -4,7 +4,7 @@ import keys from '../../configs/keys';
 import Imgur from '~/wrappers/imgur';
 import { success, internalError, badRequest } from '~/helpers/status';
 
-const router = express.Router({ strict: true });
+const router = express.Router();
 const imgur = new Imgur(keys.imgur_client_id);
 
 /**
@@ -12,7 +12,7 @@ const imgur = new Imgur(keys.imgur_client_id);
  * @description get product by productObjectId
  * @param {string} productObjectId
  */
-router.get('/:productObjectId', (req, res) => {
+router.get('/get/:productObjectId', (req, res) => {
   if (req.param != undefined && req.params.productObjectId != undefined) {
     const productObjectId = req.params.productObjectId;
     if (typeof productObjectId === typeof 'string') {
@@ -150,14 +150,14 @@ router.post('/delete/:productObjectId', (req, res) => {
 });
 
 /**
- * @name /product/list/?name&tags?userObjectId
+ * @name /product/list?name&tags&userObjectId
  * @description list products by user or/and tags or/and name or/and price
  * @param {string} name?
  * @param {array<string>} tags?
  * @param {string} userObjectId?
  * @param {number} price
  */
-router.get('/list/', (req, res) => {
+router.get('/list', (req, res) => {
   const query = req.query;
   if (Object.keys(query).length > 0) {
     const filter = Object.keys(query).reduce((newFilter, field) => {

@@ -9,11 +9,11 @@ const router = express.Router();
 const imgur = new Imgur(keys.imgur_client_id);
 
 /**
- * @name /user/:userObjectId
+ * @name /user/get/:userObjectId
  * @description get user
  * @param {string} userObjectId
  */
-router.get('/:userObjectId', (req, res) => {
+router.get('/get/:userObjectId', (req, res) => {
   if (req.params != undefined && req.params.userObjectId != undefined) {
     const userObjectId = req.params.userObjectId;
     if (typeof userObjectId == typeof 'string') {
@@ -178,13 +178,13 @@ router.post('/delete/:userObjectId', (req, res) => {
 });
 
 /**
- * @name /user/list/:name
+ * @name /user/list?name
  * @description get users by name
  * @param {string} name
  */
-router.get('/list/:name', (req, res) => {
-  if (req.params != undefined && req.params.name != undefined) {
-    const name = req.params.name;
+router.get('/list', (req, res) => {
+  if (req.query != undefined && req.query.name != undefined) {
+    const name = req.query.name;
     if (typeof name == typeof 'string') {
       const filter = {
         name: name
