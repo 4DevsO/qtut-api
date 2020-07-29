@@ -21,7 +21,7 @@
     "express-mung": "0.5.1",
     "helmet": "3.14.0",
     "morgan": "1.9.1",
-    "parse": "^2.1.0",
+    "parse": "^2.10.0",
     "password-validator": "^4.1.1",
     "request": "2.88.0"
   },
