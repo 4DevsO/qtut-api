@@ -17,7 +17,7 @@
     "body-parser": "^1.18.3",
     "dotenv": "6.1.0",
     "email-validator": "^2.0.4",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-mung": "0.5.1",
     "helmet": "3.14.0",
     "morgan": "1.9.1",
